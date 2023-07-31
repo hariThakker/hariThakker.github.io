@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+        <title>My Website</title>
+    </head>
+    <style type="text/css">
+        *{
+            font-family: 'Poppins';
+        }
+        .divv{
+            width: 40vw;
+        }
+        .divv .input, select{
+            margin-bottom: 2vh;
+        }
+        .divv span{
+            font-size: 18px;
+        }
+        .input, select{
+            width: 100%;
+            height: 5vh;
+            min-height: 40px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        .input:focus, select:focus{
+            box-shadow: none;
+            outline: 2px black;
+        }
+        @media (max-width: 767px) {
+            .input{
+                width: 80vw;
+                height: 5vh;
+            }
+            .divv{
+                width: auto;
+            }
+        }
+        .btn:focus{
+            box-shadow: none;
+        }
+        .btn{
+            margin-top: 2vh;
+            border-width: 1px;
+            border-color: black;
+        }
+        .btn:hover{
+            background-color: black;
+            color: white;
+        }
+        #check{
+            height: 14px;
+            width: 14px;
+            margin-right: 20px;
+        }
+        label{
+            font-size: 18px;
+            width: 100%;
+            background-color: #f0f0f0;
+            padding: 2vh;
+        }
+        #snackbar {
+          visibility: hidden;
+          min-width: 250px;
+          margin-left: -125px;
+          background-color: #333;
+          color: #fff;
+          text-align: center;
+          border-radius: 2px;
+          padding: 16px;
+          position: fixed;
+          z-index: 1;
+          left: 50%;
+          bottom: 30px;
+        }
+
+        #snackbar.show {
+          visibility: visible;
+          -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+          animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @-webkit-keyframes fadein {
+          from {bottom: 0; opacity: 0;}
+          to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadein {
+          from {bottom: 0; opacity: 0;}
+          to {bottom: 30px; opacity: 1;}
+        }
+
+        @-webkit-keyframes fadeout {
+          from {bottom: 30px; opacity: 1;}
+          to {bottom: 0; opacity: 0;}
+        }
+
+        @keyframes fadeout {
+          from {bottom: 30px; opacity: 1;}
+          to {bottom: 0; opacity: 0;}
+        }
+    </style>
+    <body onload="load()">
+        <div class="container">
+            <div class="row">
+              <div class="col d-flex justify-content-center align-items-center" style="height: 100vh;">
+                <div class="divv">
+                    <div class="col text-center">
+                        <h2>Jay Swaminarayan</h2>
+                    </div>
+                    <div class="col text-left">
+                        <span>Date</span>
+                    </div>
+                    <div class="col text-center">
+                        <input class="input" type="Date" id="date">
+                    </div>
+                    <div class="col text-left">
+                        <span>Subject</span>
+                    </div>
+                    <div class="col text-center">
+                        <select id="subs" onchange="load_names()"><option style="display: none;"></option></select>
+                    </div>
+                    <div class="col text-left">
+                        <span>Group no.</span>
+                    </div>
+                    <div class="col text-center">
+                        <select id="groups" onchange="load_names()"><option style="display: none;"></option></select>
+                    </div>
+                    <div class="col text-left" id="names"></div>
+                    <div class="col text-left">
+                        <span>P sant</span>
+                    </div>
+                    <div class="col text-center">
+                        <input class="input" type="Text" id="psant">
+                    </div>
+                    <div class="col text-center">
+                        <input class="input" type="submit" class="btn" onclick="send_data()">
+                    </div>
+                    <div id="snackbar">Success!</div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript">
+        function get_Date(){
+            const currentDate = new Date();
+            const formattedDate = currentDate.toISOString().split('T')[0];
+            document.getElementById('date').value = formattedDate;
+        }
+
+        function fetch_group(){
+            fetch("group_list.json")
+            .then((response) => response.json())
+            .then((json) => {
+                var x = document.getElementById("groups");
+                var data = (json['groups']).split(',');
+                var grp_drp_dwn = document.getElementById("groups");
+                data.forEach((group) => {
+                    var option = document.createElement("option");
+                    option.value = group;
+                    option.textContent = group;
+                    x.appendChild(option);
+                });
+            });
+        }
+
+        function fetch_subjects(){
+            fetch("subjects.json")
+            .then((response) => response.json())
+            .then((json) => {
+                var x = document.getElementById("subs");
+                var data = (json['subs']).split(',');
+                var grp_drp_dwn = document.getElementById("subs");
+                data.forEach((group) => {
+                    var option = document.createElement("option");
+                    option.value = group;
+                    option.textContent = group;
+                    x.appendChild(option);
+                });
+            });
+        }
+
+        function load_names() {
+            document.getElementById("names").innerHTML = ''
+            var group = document.getElementById('groups').value.toLowerCase();
+            fetch(group + '.json')
+            .then((response) => response.json())
+            .then((json) => {
+                var x = document.getElementById("names");
+                var data = (json['names']).split(',');
+                var a = '';
+                data.forEach((name) => {
+                    a = a + '<label><input type="checkbox" name="check" value="'+name+'">'+ name +'</label><br>';
+                });
+                console.log(document.getElementById('names').innerHTML)
+                x.innerHTML = a;
+            });
+        }
+
+        function get_chkbox(){
+            var checkboxes = document.getElementsByName('check');
+            var a = []
+            checkboxes.forEach((name) => {
+                if(name.checked){
+                    a.push(name.value);
+                }
+            })
+            return a.toString();
+        }
+
+        function send_data() {
+            var names = get_chkbox();
+            var l = document.getElementById('psant').value;
+            var subject = document.getElementById('subs').value;
+            var date = document.getElementById('date').value;
+            var group = document.getElementById('groups').value.toUpperCase();
+            if(names != '' && l != '' && subject != '' && date != '' && group != ''){
+                fetch('https://docs.google.com/forms/d/e/1FAIpQLSceIf1xuCutZpSV-VRggIs8wG6pW-IRST0AVXVa9tfEuVSVqQ/formResponse?entry.245905664='+date+'&entry.561461823='+group+'&entry.1923221476='+names+'&entry.702741238='+subject+'&entry.1844061665='+l)
+                show_toast();
+            }
+        }
+
+        function show_toast() {
+          var x = document.getElementById("snackbar");
+          x.className = "show";
+          setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+        }
+
+        function load() {
+            get_Date();
+            fetch_group();
+            fetch_subjects()
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</html>
